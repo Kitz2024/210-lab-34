@@ -6,7 +6,8 @@
 #include <algorithm>
 using namespace std;
 
-const int SIZE = 7; 
+//Changed Size from 7 to 12
+const int SIZE = 12; 
 
 struct Edge {
     int src, dest, weight;
@@ -96,7 +97,14 @@ int main() {
     // Creates a vector of graph edges/weights
     vector<Edge> edges = {
         // (x, y, w) —> edge from x to y having weight w
-        {0,1,12},{0,2,8},{0,3,21},{2,3,6},{2,6,2},{5,6,6},{4,5,9},{2,4,4},{2,5,5}
+        //Change weight from {0,1,12} - {0,1,15}
+        //Removed 2 Nodes {5,6,6} / {2,5,5}
+        //7 Nodes (9 Original)
+        {0,1,15},{0,2,8},{0,3,21},{2,3,6},{2,6,2},{4,5,9},{2,4,4},
+        //adding 6 new nodes
+        {6, 7, 10}, {6, 8, 15}, {6, 9, 5},{7, 6, 10}, {7, 8, 3}, {7, 10, 7},
+        {8, 6, 15}, {8, 7, 3}, {8, 9, 7},{9, 6, 5}, {9, 8, 7}, {9, 10, 2},
+        {10, 9, 2}, {10, 7, 7}, {10, 11, 3},{11, 10, 3}
     };
 
     // Creates graph
