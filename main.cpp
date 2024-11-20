@@ -125,6 +125,7 @@ public:
 
 // Print the network's adjacency list
     void printGrid() {
+        cout << "Step 3" << endl;
         cout << "Electrical Network Topology:\n================================\n";
         for (int i = 0; i < adjList.size(); i++) {
             cout << componentNames[i] << " connects to:\n";
