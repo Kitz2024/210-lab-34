@@ -6,7 +6,6 @@
 using namespace std;
 
 const int SIZE = 12; // Updated to 13 nodes
-const int INF = numeric_limits<int>::max(); //Dijkstra's Algorithm
 
 struct Edge {
     int src, dest, weight;
@@ -57,19 +56,6 @@ public:
                      << " (Transmission Capacity: " << v.second << " MW)\n";
             }
             cout << endl;
-        }
-    }
-
-    // DFS Traversal
-    void DFSsearch(int v, vector<bool> &visited) {
-        visited[v] = true;
-        cout << v << " ";
-
-        for (auto &neighbor : adjList[v]) {
-            int next = neighbor.first;
-            if (!visited[next]) {
-                DFSsearch(next, visited);
-            }
         }
     }
     // DFS Traversal
@@ -156,7 +142,7 @@ public:
         }
         cout << endl;
     }
-
+    
     
 };
 
@@ -191,6 +177,9 @@ int main() {
     graph.printGrid();
     graph.tracePowerFlow(0);
     graph.analyzeServiceAreas(0);
+
+    // Step 4 Output: Shortest Path
+    graph.findShortestPaths(0);
 
     return 0;
 }
