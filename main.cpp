@@ -1,29 +1,34 @@
-//Kit Pollinger
-//210 lab 34 | Net Graph
+// Kit Pollinger
+// 210 lab 34 | Net Graph
 #include <iostream>
 #include <vector>
 #include <queue>
 using namespace std;
 
-const int SIZE = 12; // Updated to 13 nodes
+const int SIZE = 12;                        // Updated to 13 nodes
+const int INF = numeric_limits<int>::max(); // Dijkstra's Algorithm
 
-struct Edge {
+struct Edge
+{
     int src, dest, weight;
 };
 
 typedef pair<int, int> Pair; // Alias for pair<int, int>
 
-class Graph {
+class Graph
+{
 public:
-    vector<vector<Pair>> adjList; // Adjacency list representation of the graph
+    vector<vector<Pair>> adjList;  // Adjacency list representation of the graph
     vector<string> componentNames; // Names/descriptions for nodes (Step 3)
 
     // Constructor to initialize the graph with edges
-    Graph(vector<Edge> const &edges, vector<string> const &names) {
+    Graph(vector<Edge> const &edges, vector<string> const &names)
+    {
         adjList.resize(SIZE);
         componentNames = names;
 
-        for (auto &edge : edges) {
+        for (auto &edge : edges)
+        {
             int src = edge.src;
             int dest = edge.dest;
             int weight = edge.weight;
@@ -32,26 +37,29 @@ public:
             adjList[dest].push_back(make_pair(src, weight)); // Undirected graph
         }
     }
-
     // Print the adjacency list
-    void printGraph() {
+    void printGraph()
+    {
         cout << "Step 1 - 2" << endl;
         cout << "Graph's adjacency list:\n";
-        for (int i = 0; i < adjList.size(); i++) {
+        for (int i = 0; i < adjList.size(); i++)
+        {
             cout << i << " --> ";
             for (Pair v : adjList[i])
                 cout << "(" << v.first << ", " << v.second << ") ";
             cout << endl;
         }
     }
-
     // Print electrical network topology with component names (Step 3)
-    void printGrid() {
+    void printGrid()
+    {
         cout << "Step 3\n";
         cout << "Electrical Network Topology:\n================================\n";
-        for (int i = 0; i < adjList.size(); i++) {
+        for (int i = 0; i < adjList.size(); i++)
+        {
             cout << componentNames[i] << " connects to:\n";
-            for (Pair v : adjList[i]) {
+            for (Pair v : adjList[i])
+            {
                 cout << "   " << componentNames[v.first]
                      << " (Transmission Capacity: " << v.second << " MW)\n";
             }
@@ -59,27 +67,30 @@ public:
         }
     }
     // DFS Traversal
-    void DFSsearch(int v, vector<bool> &visited) {
+    void DFSsearch(int v, vector<bool> &visited)
+    {
         visited[v] = true;
         cout << v << " ";
 
-        for (auto &neighbor : adjList[v]) {
+        for (auto &neighbor : adjList[v])
+        {
             int next = neighbor.first;
-            if (!visited[next]) {
+            if (!visited[next])
+            {
                 DFSsearch(next, visited);
             }
         }
     }
-
-    void DFS(int start) {
+    void DFS(int start)
+    {
         vector<bool> visited(adjList.size(), false);
         cout << "DFS starting from vertex " << start << ":\n";
         DFSsearch(start, visited);
         cout << endl;
     }
-
     // BFS Traversal
-    void BFS(int start) {
+    void BFS(int start)
+    {
         vector<bool> visited(adjList.size(), false);
         queue<int> q;
 
@@ -87,14 +98,17 @@ public:
         visited[start] = true;
 
         cout << "BFS starting from vertex " << start << ":\n";
-        while (!q.empty()) {
+        while (!q.empty())
+        {
             int v = q.front();
             q.pop();
             cout << v << " ";
 
-            for (auto &neighbor : adjList[v]) {
+            for (auto &neighbor : adjList[v])
+            {
                 int next = neighbor.first;
-                if (!visited[next]) {
+                if (!visited[next])
+                {
                     q.push(next);
                     visited[next] = true;
                 }
@@ -103,9 +117,9 @@ public:
         cout << endl;
     }
 
-
     // Trace power flow using DFS (Step 3)
-    void tracePowerFlow(int start) {
+    void tracePowerFlow(int start)
+    {
         vector<bool> visited(adjList.size(), false);
         cout << "\nTracing Power Flow (DFS) from " << componentNames[start] << ":\n";
         cout << "=======================================\n";
@@ -114,7 +128,8 @@ public:
     }
 
     // Analyze service areas layer-by-layer using BFS (Step 3)
-    void analyzeServiceAreas(int start) {
+    void analyzeServiceAreas(int start)
+    {
         vector<bool> visited(adjList.size(), false);
         queue<int> q;
 
@@ -125,14 +140,17 @@ public:
              << componentNames[start] << ":\n";
         cout << "=================================================\n";
 
-        while (!q.empty()) {
+        while (!q.empty())
+        {
             int v = q.front();
             q.pop();
             cout << "Checking " << componentNames[v] << endl;
 
-            for (auto &neighbor : adjList[v]) {
+            for (auto &neighbor : adjList[v])
+            {
                 int next = neighbor.first;
-                if (!visited[next]) {
+                if (!visited[next])
+                {
                     cout << "   Next service area: " << componentNames[next]
                          << " (Transmission Capacity: " << neighbor.second << " MW)\n";
                     q.push(next);
@@ -142,28 +160,82 @@ public:
         }
         cout << endl;
     }
-    
-    
+    // Shortest Path using Dijkstra's Algorithm
+    void findShortestPaths(int start)
+    {
+        vector<int> dist(SIZE, INF); // Initialize distances to all nodes as infinity
+        dist[start] = 0;
+
+        // Priority queue to store (distance, vertex) pairs
+        priority_queue<Pair, vector<Pair>, greater<Pair>> pq;
+        pq.push({0, start});
+
+        while (!pq.empty())
+        {
+            int currentDist = pq.top().first;
+            int currentNode = pq.top().second;
+            pq.pop();
+
+            // If the distance in the priority queue is outdated, skip processing
+            if (currentDist > dist[currentNode])
+                continue;
+
+            // Process all neighbors of the current node
+            for (auto &neighbor : adjList[currentNode])
+            {
+                int nextNode = neighbor.first;
+                int edgeWeight = neighbor.second;
+
+                // Relaxation step
+                if (dist[currentNode] + edgeWeight < dist[nextNode])
+                {
+                    dist[nextNode] = dist[currentNode] + edgeWeight;
+                    pq.push({dist[nextNode], nextNode});
+                }
+            }
+        }
+
+        // Print shortest paths
+        cout << "Step 4" << endl;
+        cout << "Shortest path from node " << start << ":\n";
+        for (int i = 0; i < SIZE; i++)
+        {
+            cout << start << " -> " << i << " : ";
+            if (dist[i] == INF)
+                cout << "INF";
+            else
+                cout << dist[i];
+            cout << endl;
+        }
+    }
 };
 
-int main() {
+int main()
+{
     // Define edges for the graph
     vector<Edge> edges = {
         // Original edges (Step 1)
-        {0,1,15},{0,2,8},{0,3,21},{2,3,6},{2,6,2},{4,5,9},{2,4,4},
-        //adding 6 new nodes
-        {7, 8, 10}, {9, 10, 11}, {11, 1, 7}, {1, 8, 13}, {3, 9, 14},
-        {6, 7, 15},
-        //Nodes for Step 3
-        {0, 1, 150}, {0, 2, 300}, {1, 3, 100}, {1, 4, 200},{2, 5, 250}, {3, 6, 50}, {4, 6, 70}
-    };
+        /*
+        // Creates a vector of graph edges/weights
+        vector<Edge> edges = {
+        // (x, y, w) —> edge from x to y having weight w
+        original nodes
+        {0,1,12},{0,2,8},{0,3,21},{2,3,6},{2,6,2},{5,6,6},{4,5,9},{2,4,4},{2,5,5}
+        };
+        */
+        //Removed Nodes {2,5,5} and {5,6,6}
+        {0, 1, 15},{0, 2, 8},{0, 3, 21},{2, 3, 6},{2, 6, 2},{4, 5, 9},{2, 4, 4},
+        // adding 6 new nodes
+        {7, 8, 10},{9, 10, 11},{11, 1, 7},{1, 8, 13},{3, 9, 14},{6, 7, 15},
+        // Nodes for Step 3
+        {0, 1, 150},{0, 2, 300},{1, 3, 100},{1, 4, 200},{2, 5, 250},{3, 6, 50},{4, 6, 70}
+        };
 
     // Define component descriptions for Step 3
     vector<string> names = {
         "Power Plant A", "Substation B", "Substation C", "Residential Area D",
         "Commercial Area E", "Substation F", "Transformer G", "Industrial Park H",
-        "Residential Area I", "Substation J", "Transformer K", "Power Hub L", "Backup Station M"
-    };
+        "Residential Area I", "Substation J", "Transformer K", "Power Hub L", "Backup Station M"};
 
     // Create the graph
     Graph graph(edges, names);
