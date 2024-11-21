@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <queue>
+#include <functional>
 using namespace std;
 
 const int SIZE = 12;                        // Updated to 13 nodes
@@ -40,14 +41,14 @@ public:
     // Print the adjacency list
     void printGraph()
     {
-        cout << "Step 1 - 2" << endl;
+        cout << "Step 1 - 2\n";
         cout << "Graph's adjacency list:\n";
         for (int i = 0; i < adjList.size(); i++)
         {
             cout << i << " --> ";
             for (Pair v : adjList[i])
                 cout << "(" << v.first << ", " << v.second << ") ";
-            cout << endl;
+                cout << endl;
         }
     }
     // Print electrical network topology with component names (Step 3)
@@ -208,6 +209,74 @@ public:
             cout << endl;
         }
     }
+
+    //MST
+    //Spanning Tree
+    void FindMST(){
+        {
+        //Change all edges into a single list
+        vector<Edge> allEdges;
+        for (int i = 0; i < adjList.size(); i++)
+        {
+            for (auto &neighbor : adjList[i])
+            {
+                if (i < neighbor.first) // Avoid duplicating edges in undirected graph
+                    allEdges.push_back({i, neighbor.first, neighbor.second});
+            }
+        }
+
+        // Sort edges by weight
+        sort(allEdges.begin(), allEdges.end(), [](Edge const &a, Edge const &b)
+             { return a.weight < b.weight; });
+
+        // Union-Find setup
+        vector<int> parent(SIZE), rank(SIZE, 0);
+        for (int i = 0; i < SIZE; i++)
+            parent[i] = i;
+
+        function<int(int)> find = [&](int v)
+        {
+            if (v == parent[v])
+                return v;
+            return parent[v] = find(parent[v]); // Path compression
+        };
+
+        auto unionSets = [&](int u, int v)
+        {
+            u = find(u), v = find(v);
+            if (u != v)
+            {
+                if (rank[u] < rank[v])
+                    swap(u, v);
+                parent[v] = u;
+                if (rank[u] == rank[v])
+                    rank[u]++;
+            }
+        };
+
+        // Step 4: Build MST using Kruskal's Algorithm
+        vector<Edge> mstEdges;
+        for (auto &edge : allEdges)
+        {
+            if (find(edge.src) != find(edge.dest))
+            {
+                mstEdges.push_back(edge);
+                unionSets(edge.src, edge.dest);
+            }
+        }
+
+        // Step 5: Print the MST edges
+        cout << "Step 5\nMinimum Spanning Tree edges:\n";
+        for (auto &edge : mstEdges)
+        {
+            cout << "Edge from " << componentNames[edge.src]
+                 << " to " << componentNames[edge.dest]
+                 << " with capacity: " << edge.weight << " units\n";
+        }
+        cout << endl;
+        }
+    }
+
 };
 
 int main()
@@ -252,6 +321,9 @@ int main()
 
     // Step 4 Output: Shortest Path
     graph.findShortestPaths(0);
+    //Step 5
+    graph.FindMST();
 
     return 0;
 }
+
