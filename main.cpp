@@ -325,11 +325,11 @@ int main()
     graph.FindMST();
 
     //Step 6
-
+    cout << "Step 6\n";
     cout << "Electrical Network Menu:\n";
     int choice;
     while (choice != 0){
-        cout << "[1] electrical network topology\n"
+        cout << "[1] Electrical network topology\n"
         << "[2] Check contaminant spread (BFS)\n"
         << "[3] Plan inspection route (DFS)\n"
         << "[4] Calculate shortest paths\n"
@@ -363,7 +363,6 @@ int main()
             break;
         }
     }
-
 
     return 0;
 }
