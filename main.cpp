@@ -321,9 +321,12 @@ int main()
 
     // Step 4 Output: Shortest Path
     graph.findShortestPaths(0);
-    //Step 5
+    //Step 5: FindMST
     graph.FindMST();
 
+    //Step 6
+    int choice;
+    
     return 0;
 }
 
