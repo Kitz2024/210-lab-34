@@ -325,8 +325,46 @@ int main()
     graph.FindMST();
 
     //Step 6
+
+    cout << "Electrical Network Menu:\n";
     int choice;
-    
+    while (choice != 0){
+        cout << "[1] electrical network topology\n"
+        << "[2] Check contaminant spread (BFS)\n"
+        << "[3] Plan inspection route (DFS)\n"
+        << "[4] Calculate shortest paths\n"
+        << "[5] Find Minimum Spanning Tree\n"
+        << "[0] Exit\n"
+        << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice)
+        {
+        case 1:
+            graph.printGrid();
+            break;
+        case 2:
+            graph.BFS(0);
+            break;
+        case 3:
+            graph.DFS(0);
+            break;
+        case 4:
+            graph.findShortestPaths(0);
+            break;
+        case 5:
+            graph.FindMST();
+            break;
+        case 0:
+            cout << "Exiting the program.\n";
+            break;
+        default:
+            cout << "Invalid choice. Please try again.\n";
+            break;
+        }
+    }
+
+
     return 0;
 }
 
